@@ -1,6 +1,7 @@
 import Worker from '../../lib/worker';
 import chai from 'chai';
 import { Promise } from 'rsvp';
+import regeneratorRuntime from 'regenerator/runtime-module';
 
 const { expect } = chai;
 
@@ -54,70 +55,75 @@ describe('worker', function() {
   });
 
   describe('#run', function() {
-    it('runs and fulfills with the return value', function() {
+    it('runs and fulfills with the return value', async function() {
       expect(worker).to.be.ACTIVE;
 
-      return worker.run(function() {
+      let value = await worker.run(function() {
         return 1+1;
-      }).then(function(value) {
-        expect(worker).to.be.ACTIVE;
-        expect(value).to.eql(2);
       });
+
+      expect(worker).to.be.ACTIVE;
+      expect(value).to.eql(2);
     });
 
-    it('runs and rejects with the failure reason', function() {
+    it('runs and rejects with the failure reason', async function() {
       expect(worker).to.be.ACTIVE;
 
-      return worker.run(function() {
-        throw new Error('OMG');
-      }).then(function() {
+      try {
+        await worker.run(function() {
+          throw new Error('OMG');
+        });
         expect(true).to.be.false;
-      }, function(reason) {
+      } catch(reason) {
         expect(worker).to.be.ACTIVE;
         expect(reason.message).to.eql('OMG');
-      });
+      }
     });
 
-    it('runs and rejects with NO failure reason', function() {
+    it('runs and rejects with NO failure reason', async function() {
       expect(worker).to.be.ACTIVE;
 
-      return worker.run(function() {
-        return require('rsvp').Promise.reject();
-      }).then(function() {
+      try {
+        await worker.run(function() {
+          return require('rsvp').Promise.reject();
+        });
         expect(true).to.be.false;
-      }, function(reason) {
+      } catch(reason) {
         expect(worker).to.be.ACTIVE;
         expect(reason).to.eql(null);
-      });
+      }
     });
 
-    it('runs and rejects with the failure reason (promise)', function() {
+    it('runs and rejects with the failure reason (promise)', async function() {
       expect(worker).to.be.ACTIVE;
 
-      return worker.run(function() {
-        return require('rsvp').Promise.reject('a failure');
-      }).then(function() {
+      try {
+        await worker.run(function() {
+          return require('rsvp').Promise.reject('a failure');
+        });
+
         expect(true).to.be.false;
-      }, function(reason) {
+      } catch(reason) {
         expect(worker).to.be.ACTIVE;
         expect(reason).to.eql('a failure');
-      });
+      }
     });
 
-    it('runs and rejects with the failure reason (setTimeout)', function() {
+    it('runs and rejects with the failure reason (setTimeout)', async function() {
       expect(worker).to.be.ACTIVE;
 
-      return worker.run(function() {
+      let value = await worker.run(function() {
         setTimeout(function() {
           throw new Error('OMG');
         }, 0);
         return 'some value';
-      }).then(function(value) {
-        expect(value).to.be.eql('some value');
-        expect(worker).to.be.ACTIVE;
-        return delay(100, function() {
-          expect(worker).to.be.TERMINATED;
-        });
+      });
+
+      expect(value).to.be.eql('some value');
+      expect(worker).to.be.ACTIVE;
+
+      await delay(100, function() {
+        expect(worker).to.be.TERMINATED;
       });
     });
   });

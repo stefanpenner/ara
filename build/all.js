@@ -33,7 +33,7 @@ glob.sync('tests/**/*.js').forEach(function(testFile) {
   rollup.rollup({
     entry: testFile,
     format: 'cjs',
-    plugins: [babel()]
+  plugins: [ babel() ],
   }).then(function( bundle ) {
     return bundle.write({
       format: 'cjs',

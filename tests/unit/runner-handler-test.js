@@ -1,6 +1,7 @@
 import handler from '../../lib/runner/handler';
 import { expect } from 'chai';
 import td from 'testdouble';
+import regeneratorRuntime from 'regenerator/runtime-module';
 
 describe('runner/handler', () => {
   let send, oldSend;
@@ -16,14 +17,14 @@ describe('runner/handler', () => {
   });
 
   describe('request', function() {
-    it('fails with no input', function() {
-      return handler().then(function() {
-        let sent = lastArgs(send);
+    it('fails with no input', async function() {
+      await handler();
 
-        expect(sent.requestId).to.eql('unknown');
-        expect(sent.reason.name).to.eql('SyntaxError');
-        expect(sent.reason.stack).to.be.a.String;
-      });
+      let sent = lastArgs(send);
+
+      expect(sent.requestId).to.eql('unknown');
+      expect(sent.reason.name).to.eql('SyntaxError');
+      expect(sent.reason.stack).to.be.a.String;
     });
 
     function lastArgs(send) {
@@ -31,63 +32,63 @@ describe('runner/handler', () => {
       return JSON.parse(calls[calls.length - 1].args[0]);
     }
 
-    it('fails with mailformed JSON', function() {
-      return handler('{{{').then(function() {
-         let sent = lastArgs(send);
+    it('fails with mailformed JSON', async function() {
+      await handler('{{{');
 
-        expect(sent.reason.name).to.eql('SyntaxError');
-        expect(sent.reason.message).to.eql('Unexpected token {');
-        expect(sent.reason.stack).to.be.a.String;
-        expect(sent.reason.stack).to.be.a.String;
-      });
+      let sent = lastArgs(send);
+
+      expect(sent.reason.name).to.eql('SyntaxError');
+      expect(sent.reason.message).to.eql('Unexpected token {');
+      expect(sent.reason.stack).to.be.a.String;
+      expect(sent.reason.stack).to.be.a.String;
     });
 
-    it('fails with empty', function() {
-      return handler(JSON.stringify({})).then(function() {
-        let sent = lastArgs(send);
+    it('fails with empty', async function() {
+      await handler(JSON.stringify({}));
 
-        expect(sent.reason.name).to.eql('Error');
-        expect(sent.reason.message).to.eql('Payload requires `requestId`');
-      });
+      let sent = lastArgs(send);
+
+      expect(sent.reason.name).to.eql('Error');
+      expect(sent.reason.message).to.eql('Payload requires `requestId`');
     });
 
-    it('fails with no work', function() {
-      return handler(JSON.stringify({
+    it('fails with no work', async function() {
+      await handler(JSON.stringify({
         requestId: 1
-      })).then(function() {
-        let sent = lastArgs(send);
+      }));
 
-        expect(sent.reason.name).to.eql('Error');
-        expect(sent.reason.message).to.eql('Payload requires `work`');
-        expect(sent.reason.stack).to.be.a.String;
-        expect(sent.reason.stack).to.be.a.String;
-      });
+      let sent = lastArgs(send);
+
+      expect(sent.reason.name).to.eql('Error');
+      expect(sent.reason.message).to.eql('Payload requires `work`');
+      expect(sent.reason.stack).to.be.a.String;
+      expect(sent.reason.stack).to.be.a.String;
     });
 
-    it('fails with no ID', function() {
-      return handler(JSON.stringify({
+    it('fails with no ID', async function() {
+      await handler(JSON.stringify({
         work: '1'
-      })).then(function() {
-        let sent = lastArgs(send);
+      }));
 
-        expect(sent.reason.name).to.eql('Error');
-        expect(sent.reason.message).to.eql('Payload requires `requestId`');
-        expect(sent.reason.stack).to.be.a.String;
-        expect(sent.reason.stack).to.be.a.String;
-      });
+      let sent = lastArgs(send);
+
+      expect(sent.reason.name).to.eql('Error');
+      expect(sent.reason.message).to.eql('Payload requires `requestId`');
+      expect(sent.reason.stack).to.be.a.String;
+      expect(sent.reason.stack).to.be.a.String;
     });
 
-    it('fails with invalid work, and no id', function() {
-      return handler(JSON.stringify({
+    it('fails with invalid work, and no id', async function() {
+      await  handler(JSON.stringify({
         work: '#^##asdf$##'
-      })).then(function() {
-        let sent = lastArgs(send);
+      }));
 
-        expect(sent.reason.name).to.eql('Error');
-        expect(sent.reason.message).to.eql('Payload requires `requestId`');
-        expect(sent.reason.stack).to.be.a.String;
-        expect(sent.reason.stack).to.be.a.String;
-      });
+      let sent = lastArgs(send);
+
+      expect(sent.reason.name).to.eql('Error');
+      expect(sent.reason.message).to.eql('Payload requires `requestId`');
+      expect(sent.reason.stack).to.be.a.String;
+      expect(sent.reason.stack).to.be.a.String;
     });
   });
 
