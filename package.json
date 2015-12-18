@@ -5,6 +5,7 @@
   "main": "dist/para.js",
   "scripts": {
     "build": "node build/all",
+    "prepublish": "node build/all",
     "test": "mocha dist/tests/**/*-test.js",
     "test:debug": "mocha debug dist/tests/**/*-test.js"
   },
