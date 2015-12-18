@@ -3,7 +3,11 @@
 var babel = require('rollup-plugin-babel');
 var rollup = require( 'rollup' );
 var glob = require('glob');
-
+function rethrow(reason) {
+  setTimeout(function() {
+    throw reason;
+  }, 0);
+}
 rollup.rollup({
   entry: 'lib/index',
   format: 'umd',
@@ -15,19 +19,21 @@ rollup.rollup({
     format: 'cjs',
     dest: 'dist/para.js',
   });
-}).catch(console.error.bind(console));
+}).catch(rethrow);
 
 rollup.rollup({
   entry: 'lib/runner/index',
   format: 'umd',
-  plugins: [ babel() ],
+  plugins: [
+    babel()
+  ],
   sourcemap: true
 }).then(function(bundle) {
   return bundle.write({
     format: 'cjs',
     dest: 'dist/runner.js',
   });
-}).catch(console.error.bind(console));
+}).catch(rethrow);
 
 glob.sync('tests/**/*.js').forEach(function(testFile) {
   rollup.rollup({
@@ -39,5 +45,5 @@ glob.sync('tests/**/*.js').forEach(function(testFile) {
       format: 'cjs',
       dest: 'dist/' + testFile
     });
-  }).catch(console.error.bind(console));
+  }).catch(rethrow);
 });
