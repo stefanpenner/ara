@@ -16,8 +16,11 @@
     "rsvp": "^3.1.0"
   },
   "devDependencies": {
+    "babel-eslint": "^4.1.6",
     "chai": "^3.4.1",
+    "eslint": "^1.10.3",
     "mocha": "^2.3.4",
+    "mocha-eslint": "^1.0.0",
     "rollup": "^0.21.2",
     "rollup-plugin-babel": "^1.0.0",
     "testdouble": "^0.7.3"
