@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/para.js",
   "scripts": {
-    "build": "rm -rf dist; node build/all",
+    "build": "node build/all",
     "test": "mocha dist/tests/**/*-test.js",
     "test:debug": "mocha debug dist/tests/**/*-test.js"
   },
