@@ -5,7 +5,7 @@
   "main": "dist/para.js",
   "scripts": {
     "build": "rm -rf dist; node build/all",
-    "test": "istanbul cover _mocha dist/tests/**/*-test.js",
+    "test": "mocha dist/tests/**/*-test.js",
     "test:debug": "mocha debug dist/tests/**/*-test.js"
   },
   "author": "",
@@ -17,7 +17,6 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
     "rollup": "^0.21.2",
     "rollup-plugin-babel": "^1.0.0",
