@@ -1,6 +1,6 @@
-var para = require('./dist/para');
-var Worker = para.Worker;
-var maxCPU = para.maxCPU;
+var ara = require('./dist/ara');
+var Worker = ara.Worker;
+var maxCPU = ara.maxCPU;
 var Promise = require('rsvp').Promise;
 
 function log(task) {
