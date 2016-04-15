@@ -11,13 +11,13 @@ function rethrow(reason) {
 rollup.rollup({
   entry: 'lib/index',
   format: 'umd',
-  moduleName: 'para',
+  moduleName: 'ara',
   plugins: [ babel() ],
   sourcemap: true
 }).then(function(bundle) {
   return bundle.write({
     format: 'cjs',
-    dest: 'dist/para.js',
+    dest: 'dist/ara.js',
   });
 }).catch(rethrow);
 

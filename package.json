@@ -1,8 +1,8 @@
 {
-  "name": "para",
-  "version": "1.0.0",
+  "name": "ara",
+  "version": "0.0.1",
   "description": "",
-  "main": "dist/para.js",
+  "main": "dist/ara.js",
   "scripts": {
     "build": "node build/all",
     "prepublish": "node build/all",
