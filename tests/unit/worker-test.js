@@ -126,5 +126,10 @@ describe('worker', function() {
         expect(worker).to.be.TERMINATED;
       });
     });
+
+    describe('pending requests, and a spurious unhandledException', function() {
+      // ensure all pending requests are rejected
+      // ensure worker has been terminated
+    });
   });
 });
