@@ -9,4 +9,10 @@ describe('serializeWork', function() {
     expect(result).to.eql(2);
     expect(eval(serializeWork(work))).to.eql(result);
   });
+
+  it('can be eval\'d, with payload.arg', function() {
+    let work = x => x + 1;
+    let payload = { arg: 3 };
+    expect(eval(serializeWork(work))).to.eql(4);
+  });
 });
