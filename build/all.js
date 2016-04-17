@@ -13,7 +13,6 @@ rollup.rollup({
   format: 'umd',
   moduleName: 'ara',
   plugins: [ babel() ],
-  sourcemap: true
 }).then(function(bundle) {
   return bundle.write({
     format: 'cjs',
@@ -27,7 +26,6 @@ rollup.rollup({
   plugins: [
     babel()
   ],
-  sourcemap: true
 }).then(function(bundle) {
   return bundle.write({
     format: 'cjs',
