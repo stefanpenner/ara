@@ -1,7 +1,7 @@
 import handler from '../../lib/runner/handler';
 import { expect } from 'chai';
 import td from 'testdouble';
-import regeneratorRuntime from 'regenerator/runtime-module';
+import regeneratorRuntime from 'regenerator-runtime';
 
 describe('runner/handler', () => {
   let send, oldSend;

@@ -1,7 +1,7 @@
 import Worker from '../../lib/worker';
 import chai from 'chai';
 import { Promise } from 'rsvp';
-import regeneratorRuntime from 'regenerator/runtime-module';
+import regeneratorRuntime from 'regenerator-runtime';
 
 const { expect } = chai;
 
