@@ -38,7 +38,7 @@ describe('runner/handler', () => {
       let sent = lastArgs(send);
 
       expect(sent.reason.name).to.eql('SyntaxError');
-      expect(sent.reason.message).to.eql('Unexpected token {');
+      expect(sent.reason.message).to.match(/Unexpected token \{/);
       expect(sent.reason.stack).to.be.a.String;
       expect(sent.reason.stack).to.be.a.String;
     });
