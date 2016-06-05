@@ -1,7 +1,9 @@
 import Worker from '../../lib/worker';
 import chai from 'chai';
 import { Promise } from 'rsvp';
+/* eslint-disable */
 import regeneratorRuntime from 'regenerator-runtime';
+/* eslint-enable */
 
 const { expect } = chai;
 

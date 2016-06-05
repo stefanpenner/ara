@@ -1,7 +1,9 @@
 import handler from '../../lib/runner/handler';
 import { expect } from 'chai';
 import td from 'testdouble';
+/* eslint-disable */
 import regeneratorRuntime from 'regenerator-runtime';
+/* eslint-enable */
 
 describe('runner/handler', () => {
   let send, oldSend;

@@ -1,12 +1,15 @@
 {
+  "extends": ["eslint:recommended"],
   "env": {
-    "es6": true
+    "es6": true,
+    "browser": false,
+    "node": true
   },
   "parser": "babel-eslint",
   "ecmaFeatures": {
     "modules": true
   },
   "rules": {
-    "strict": 0
+    "strict": [2, "global"]
   }
 }
