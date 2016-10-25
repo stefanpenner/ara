@@ -12,7 +12,9 @@ describe('serializeWork', function() {
 
   it('can be eval\'d, with payload.arg', function() {
     let work = x => x + 1;
+    /* eslint-disable */
     let payload = { arg: 3 };
+    /* eslint-enable */
     expect(eval(serializeWork(work))).to.eql(4);
   });
 });

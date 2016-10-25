@@ -1,5 +1,3 @@
-'use strict';
-
 import maxCPU from '../../lib/max-cpu';
 import { expect } from 'chai';
 
