@@ -8,7 +8,7 @@ import regeneratorRuntime from 'regenerator-runtime';
 describe('runner/handler', () => {
   let send, oldSend;
 
-  before(()  => {
+  before(() => {
     send = td.function('process.send');
     oldSend = process.send;
     process.send = send;

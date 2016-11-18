@@ -13,6 +13,55 @@ function log(task) {
   });
 }
 
+/*
+class BabelWorker extends Actor {
+  prestart() {
+
+  }
+
+  receive(value) {
+    let result = require('babel-core').transform(value);
+
+    return {
+      code: result.code,
+      map:result.map
+    };
+  }
+}
+
+let worker = new BabelWorker();
+worker.send('1+1');
+worker.send({ value: '1+1' });
+
+let actorSystem = new System();
+let worker = actorSystem.actorOf(BabelWorker);
+
+worker.send('1+1');
+
+================
+
+var System = require('ara').System;
+var Actor = require('ara').Actor;
+
+var BabelWorker = Actor.extends({
+  receive: function(value) {
+    var result = require('babel-core').transform(value);
+
+    return {
+      code: result.code,
+      map:result.map
+    };
+  }
+});
+
+var worker = new BabelWorker();
+worker.send('1+1');
+
+var system = new System();
+var worker = system.actorOf(BabelWorker);
+worker.send('1+1');
+*/
+
 function work() {
   var result = require("babel-core").transform("1+1");
 

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node build/all",
     "prepublish": "node build/all",
-    "test": "mocha dist/tests/**/*-test.js",
+    "test": "node build/all && mocha dist/tests/**/*-test.js",
     "test:debug": "mocha debug dist/tests/**/*-test.js"
   },
   "author": "",
@@ -14,7 +14,9 @@
   "dependencies": {
     "babel-core": "^5.8.34",
     "babel-polyfill": "^6.3.14",
+    "core-object": "^2.0.6",
     "debug": "^2.2.0",
+    "node-uuid": "^1.4.7",
     "regenerator-runtime": "^0.9.5",
     "rsvp": "^3.1.0"
   },
