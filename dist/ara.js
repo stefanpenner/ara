@@ -258,7 +258,7 @@ var Pool = (function () {
     key: 'popIdleWorker',
     value: function popIdleWorker() {
       // return this.workers.pop();
-      return new Worker('./dist/runner.js');
+      return new Worker(__dirname + '/runner.js');
     }
   }, {
     key: 'run',
