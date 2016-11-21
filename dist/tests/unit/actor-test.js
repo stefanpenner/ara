@@ -237,14 +237,14 @@ var Worker = (function () {
   return Worker;
 })();
 
-Math.max(1, require('os').cpus().length - 1);
-
 global.Promise = global.Promise || rsvp.Promise;
 
 /* eslint-enable */
 
 // TODO: this file is just a brainstorm sketch, it actually needs to be
 // implemented.
+
+var maxCPU = 4;
 
 var Pool = (function () {
   function Pool(options) {
@@ -253,54 +253,149 @@ var Pool = (function () {
     // this.j = options && options.j || maxCPU;
     this.workers = [];
     this.idle = [];
-    this.pendingWork = [];
+    // this.inbox = [];
   }
 
   babelHelpers.createClass(Pool, [{
-    key: 'popIdleWorker',
-    value: function popIdleWorker() {
-      // return this.workers.pop();
-      return new Worker(__dirname + '/runner.js');
+    key: 'isIdlePoolEmpty',
+    value: function isIdlePoolEmpty() {
+      return this.idle.length === 0;
     }
   }, {
-    key: 'run',
-    value: function run(_ref) {
-      var value = _ref.value;
-      var receive = _ref.receive;
+    key: 'isWorkersPoolEmpty',
+    value: function isWorkersPoolEmpty() {
+      return this.workers.length === 0;
+    }
+  }, {
+    key: 'isMaxWorkers',
+    value: function isMaxWorkers() {
+      return this.workers.length === maxCPU;
+    }
+  }, {
+    key: 'popWorker',
+    value: function popWorker() {
+      var firstIndex = 0;
+      var lastIndex = this.workers.length - 1;
+
+      var result = this.workers[lastIndex];
+
+      var _ref = [this.workers[lastIndex], this.workers[firstIndex]];
+      this.workers[firstIndex] = _ref[0];
+      this.workers[lastIndex] = _ref[1];
+
+      return result;
+    }
+  }, {
+    key: 'popIdleWorker',
+    value: function popIdleWorker() {
+      var _this = this;
+
+      return new Promise(function (resolve, reject) {
+        if (_this.isWorkersPoolEmpty()) {
+          var worker = new Worker(__dirname + '/runner.js');
+          console.log('ara:schedule - first run new worker');
+          _this.workers.push(worker);
+          _this.idle.push(worker);
+          resolve(worker);
+        }
+
+        if (_this.isIdlePoolEmpty()) {
+          // this means all workers are busy
+          console.log('ara:schedule - busy');
+          setTimeout(function () {
+            return resolve(_this.popIdleWorker());
+          }, 1);
+        } else {
+          var worker = undefined;
+
+          if (_this.isMaxWorkers()) {
+            console.log('ara:schedule - max workers');
+            worker = _this.popWorker();
+          } else {
+            worker = new Worker(__dirname + '/runner.js');
+            console.log('ara:schedule - new worker');
+            _this.workers.push(worker);
+          }
+
+          // remove worker from idle pool
+          //
+          resolve(worker);
+        }
+      });
+    }
+  }, {
+    key: 'schedule',
+    value: function schedule(_ref2) {
+      var value = _ref2.value;
+      var receive = _ref2.receive;
 
       var worker, _value;
 
-      return regeneratorRuntime.async(function run$(context$2$0) {
+      return regeneratorRuntime.async(function schedule$(context$2$0) {
         while (1) switch (context$2$0.prev = context$2$0.next) {
           case 0:
-            context$2$0.next = 2;
+            console.log('ara:schedule');
+            context$2$0.next = 3;
             return regeneratorRuntime.awrap(this.popIdleWorker());
 
-          case 2:
+          case 3:
             worker = context$2$0.sent;
-            context$2$0.prev = 3;
-            context$2$0.next = 6;
+            context$2$0.prev = 4;
+            context$2$0.next = 7;
             return regeneratorRuntime.awrap(worker.run(receive, _value));
 
-          case 6:
+          case 7:
             _value = context$2$0.sent;
 
             this._becameIdle(worker);
             return context$2$0.abrupt('return', _value);
 
-          case 11:
-            context$2$0.prev = 11;
-            context$2$0.t0 = context$2$0['catch'](3);
+          case 12:
+            context$2$0.prev = 12;
+            context$2$0.t0 = context$2$0['catch'](4);
 
             this._crashed(worker, context$2$0.t0);
             throw context$2$0.t0;
 
-          case 15:
+          case 16:
           case 'end':
             return context$2$0.stop();
         }
-      }, null, this, [[3, 11]]);
+      }, null, this, [[4, 12]]);
     }
+  }, {
+    key: 'ask',
+    value: function ask(arg) {
+      var args$2$0 = arguments;
+      return regeneratorRuntime.async(function ask$(context$2$0) {
+        while (1) switch (context$2$0.prev = context$2$0.next) {
+          case 0:
+            return context$2$0.abrupt('return', this.schedule.apply(this, args$2$0));
+
+          case 1:
+          case 'end':
+            return context$2$0.stop();
+        }
+      }, null, this);
+    }
+
+    // async run({ value, receive }) {
+    // let token = this.schedule();
+    // let worker = await this.popIdleWorker();
+
+    // return this.executeWithToken(token);
+    // return this.execute({ value, receive });
+
+    // try {
+    //   let value = await worker.run(receive, value);
+    //   this._becameIdle(worker);
+    //   return value;
+    // } catch(reason) {
+    //   this._crashed(worker, reason);
+    //   throw reason;
+    // }
+    // }
+
   }, {
     key: '_becameIdle',
     value: function _becameIdle(worker) {
@@ -308,9 +403,11 @@ var Pool = (function () {
     }
   }, {
     key: '_crashed',
-    value: function _crashed(worker) {
+    value: function _crashed(worker, reason) {
       // remove from workers
+      console.log(worker);
       worker.terminate(); // ensure its dead
+      console.log(reason);
     }
   }]);
   return Pool;
@@ -337,7 +434,7 @@ var System = (function () {
         while (1) switch (context$2$0.prev = context$2$0.next) {
           case 0:
             debug('system.schedule');
-            return context$2$0.abrupt('return', (_processPool = this.processPool).run.apply(_processPool, args$2$0));
+            return context$2$0.abrupt('return', (_processPool = this.processPool).ask.apply(_processPool, args$2$0));
 
           case 2:
           case 'end':
