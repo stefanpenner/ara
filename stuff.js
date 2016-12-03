@@ -23,7 +23,7 @@ var BabelActor = Actor.extend({
 
 var system = new System();
 var babelActor = system.actorOf(BabelActor);
-babelActor.send('1+1').then(function(result) {
-  // console.log(code, result.code);
-  // console.log(code, result.map);
+babelActor.ask('1+1').then(function(result) {
+  console.log(code, result.code);
+  console.log(code, result.map);
 });

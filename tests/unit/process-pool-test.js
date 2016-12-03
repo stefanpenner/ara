@@ -34,6 +34,27 @@ describe('ProcessPool', ()  => {
     expect(processPool._maxCPU).to.eq(2);
   });
 
+  it('`isInboxEmpty` returns true if inbox queue is empty, otherwise false', async function() {
+    expect(processPool.isInboxEmpty()).to.be.true;
+
+    await processPool.schedule({
+      value: '',
+      receive() { return 1; }
+    });
+
+    await processPool.schedule({
+      value: '',
+      receive() { return 1; }
+    });
+
+    await processPool.schedule({
+      value: '',
+      receive() { return 1; }
+    });
+
+    expect(processPool.isInboxEmpty()).to.be.false;
+  });
+
   it('`isWorkersPoolEmpty` returns true if workers pool is empty, otherwise false', async function() {
     expect(processPool.isWorkersPoolEmpty()).to.be.true;
 
