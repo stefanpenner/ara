@@ -12,7 +12,7 @@ var BabelActor = Actor.extend({
 
   receive: function(value) {
     var result = require('babel-core').transform(value);
-    console.log(result);
+    // console.log(result);
 
     return {
       code: result.code,
@@ -24,6 +24,6 @@ var BabelActor = Actor.extend({
 var system = new System();
 var babelActor = system.actorOf(BabelActor);
 babelActor.send('1+1').then(function(result) {
-  console.log(code, result.code);
-  console.log(code, result.map);
+  // console.log(code, result.code);
+  // console.log(code, result.map);
 });
