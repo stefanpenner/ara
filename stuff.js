@@ -6,13 +6,8 @@ var System = Ara.System;
 var Actor = Ara.Actor;
 
 var BabelActor = Actor.extend({
-  // init: function() {
-  //   this._super.apply(this, arguments);
-  // },
-
   receive: function(value) {
     var result = require('babel-core').transform(value);
-    // console.log(result);
 
     return {
       code: result.code,
