@@ -11,6 +11,7 @@ describe('ProcessPool', ()  => {
     processPool = new ProcessPool({
       maxCPU: 2
     });
+    // remove this and use test double
     processPool._createWorkerInstance = () => {
       return {
         run() {
@@ -25,7 +26,6 @@ describe('ProcessPool', ()  => {
   });
 
   it('has correct defaults', () => {
-    expect(processPool.inbox).to.deep.equal([]);
     expect(processPool.workers).to.deep.equal([]);
     expect(processPool.idle).to.deep.equal([]);
   });

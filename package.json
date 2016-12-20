@@ -3,14 +3,17 @@
   "version": "0.0.3",
   "description": "",
   "main": "dist/ara.js",
+  "engines": {
+    "node": ">=4"
+  },
   "scripts": {
     "build": "node build/all",
     "prepublish": "node build/all",
     "test": "node build/all && mocha dist/tests/**/*-test.js",
     "test:debug": "mocha debug dist/tests/**/*-test.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Stefan Penner",
+  "license": "MIT",
   "dependencies": {
     "babel-core": "^5.8.34",
     "babel-polyfill": "^6.3.14",
@@ -21,14 +24,20 @@
     "rsvp": "^3.1.0"
   },
   "devDependencies": {
+    "@types/es6-promise": "^0.0.32",
+    "@types/mocha": "^2.2.33",
+    "@types/node": "^6.0.52",
     "babel-eslint": "^4.1.6",
     "chai": "^3.4.1",
+    "chai-as-promised": "^6.0.0",
     "eslint": "^1.10.3",
     "glob": "^6.0.1",
     "mocha": "^2.3.4",
     "mocha-eslint": "^1.0.0",
     "rollup": "^0.21.2",
     "rollup-plugin-babel": "^1.0.0",
+    "rollup-plugin-typescript": "^0.8.1",
     "testdouble": "^0.7.3"
-  }
+  },
+  "repository": "git@github.com:stefanpenner/ara.git"
 }
