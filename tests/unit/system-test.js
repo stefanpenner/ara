@@ -1,4 +1,4 @@
-import EchoActor from './test-actors/echo-actor';
+import EchoActor from '../test-actors/echo-actor';
 import System from '../../lib/system';
 import chai from 'chai';
 /* eslint-disable */
@@ -19,7 +19,7 @@ describe('system', function() {
   });
 
   it('`actorOf` should return an instance of an actor given an actor path', () => {
-    let actor = system.actorOf('./test-actors/echo-actor');
+    let actor = system.actorOf('../test-actors/echo-actor');
 
     expect(actor instanceof EchoActor).to.be.true;
   });
