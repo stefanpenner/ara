@@ -1,16 +1,24 @@
+import Pool from './interfaces/process-pool';
+import Scheduler from './interfaces/scheduler';
+
 import maxCPU from './max-cpu';
 import Worker from './worker';
 import './ensure-promise';
+
 /* eslint-disable */
 import regeneratorRuntime from 'regenerator-runtime';
 /* eslint-enable */
 
-export default class ProcessPool {
+export default class ProcessPool implements Pool {
+  workers: Array<Worker>;
+  idle: Array<Worker>;
+  maxCPU: Number;
+  scheduler: Scheduler;
+
   constructor(options = {}) {
     this.workers = [];
     this.idle = [];
-    this._maxCPU = options.maxCPU || maxCPU;
-    // we need to make sure pool can operate w/o a scheduler
+    this.maxCPU = options.maxCPU || maxCPU;
     this.scheduler = options.scheduler;
   }
 
@@ -18,7 +26,7 @@ export default class ProcessPool {
     return new Worker(`${__dirname}/runner.js`);
   }
 
-  isWorkersPoolEmpty() {
+  isActivePoolEmpty() {
     return this.workers.length === 0;
   }
 
@@ -26,9 +34,11 @@ export default class ProcessPool {
     return this.idle.length === 0;
   }
 
-  isMaxWorkers() {
-    return this.workers.length === this._maxCPU;
+  isActiveLimitReached() {
+    return this.workers.length === this.maxCPU;
   }
+
+  noop() { }
 
   createWorker() {
     let worker = this._createWorkerInstance();
@@ -49,11 +59,11 @@ export default class ProcessPool {
     } catch (reason) {
       work.eventualValue.reject(reason);
 
-      this._crashed(worker, reason);
+      // this._crashed(worker, reason);
     }
   }
 
-  popIdleWorker() {
+  requestIdleWorker() {
     this._executeWork(this.idle.pop());
   }
 

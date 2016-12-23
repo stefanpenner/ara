@@ -1,15 +1,17 @@
 import uuid from 'node-uuid';
 import Message from './message';
+import System from './system';
+
 /* eslint-disable */
 import regeneratorRuntime from 'regenerator-runtime';
 /* eslint-enable */
 
 export default class ActorReference {
-  constructor({ actorPath, system }) {
-    if (!system) {
-      throw new Error('Creating actor reference using `new` is not allowed.');
-    }
+  system: System;
+  actorPath: String;
+  id: String;
 
+  constructor({ actorPath, system }) {
     this.system = system;
     this.actorPath = actorPath;
     this.id = uuid.v4();

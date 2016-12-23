@@ -1,6 +1,7 @@
 'use strict';
 
 var babel = require('rollup-plugin-babel');
+var typescript = require('rollup-plugin-typescript');
 var rollup = require( 'rollup' );
 var glob = require('glob');
 function rethrow(reason) {
@@ -12,7 +13,10 @@ rollup.rollup({
   entry: 'lib/index',
   format: 'umd',
   moduleName: 'ara',
-  plugins: [ babel() ],
+  plugins: [
+    babel(),
+    typescript()
+  ],
 }).then(function(bundle) {
   return bundle.write({
     format: 'cjs',
@@ -24,7 +28,8 @@ rollup.rollup({
   entry: 'lib/runner/index',
   format: 'umd',
   plugins: [
-    babel()
+    babel(),
+    typescript()
   ],
 }).then(function(bundle) {
   return bundle.write({

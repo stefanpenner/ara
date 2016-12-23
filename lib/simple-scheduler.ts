@@ -1,9 +1,15 @@
+import Scheduler from './interfaces/scheduler';
+import Message from './message';
 import ProcessPool from './pool';
+
 /* eslint-disable */
 import regeneratorRuntime from 'regenerator-runtime';
 /* eslint-enable */
 
-export default class SimpleScheduler {
+export default class SimpleScheduler implements Scheduler {
+  workQueue: Array<Message>;
+  processPool: ProcessPool;
+
   constructor() {
     this.workQueue = [];
     this.processPool = new ProcessPool({ scheduler: this });
@@ -19,10 +25,10 @@ export default class SimpleScheduler {
 
   runSchedule() {
     // have we reached max workers?
-    if (this.processPool.isMaxWorkers()) {
+    if (this.processPool.isActiveLimitReached()) {
       if (!this.processPool.isIdlePoolEmpty()) {
         // claim the worker and work
-        this.processPool.popIdleWorker();
+        this.processPool.requestIdleWorker();
       } else {
         // noop, wait until worker claims work
         // it might make sense to have a no-op function
@@ -39,10 +45,10 @@ export default class SimpleScheduler {
     }
   }
 
-  async queue(messageInstance) {
-    this.workQueue.push(messageInstance);
+  async queue(message: Message) {
+    this.workQueue.push(message);
     this.runSchedule();
 
-    return messageInstance.getEventualValue();
+    return message.getEventualValue();
   }
 }
