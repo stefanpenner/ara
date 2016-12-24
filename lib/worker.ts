@@ -8,15 +8,15 @@ import Serializable from './interfaces/serializable';
 const debug = _debug('ara:worker');
 
 let id = 0;
-enum WorkerState {
-  Terminated = 0,
-  Running = 1
-};
+// enum WorkerState {
+//   Terminated = 0,
+//   Running = 1
+// };
 
 export default class Worker implements Serializable {
   id: Number;
   process: any;
-  state: WorkerState;
+  state: Number;
 
   constructor(url) {
     this.requests = {};
@@ -27,7 +27,7 @@ export default class Worker implements Serializable {
     let worker = this;
 
     this.process = this.forkDebug(url);
-    this.state = WorkerState.Running;
+    // this.state = WorkerState.Running;
 
     this.process.on('message', (message) => this.receive(message));
   }
@@ -109,7 +109,7 @@ export default class Worker implements Serializable {
   }
 
   terminate() {
-    this.state = WorkerState.Terminated;
+    // this.state = WorkerState.Terminated;
     // is this async? should we confirm?
     this.process.kill();
   }
