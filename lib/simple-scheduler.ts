@@ -23,7 +23,9 @@ export default class SimpleScheduler implements Scheduler {
     return this.workQueue.length !== 0;
   }
 
-  runSchedule() {
+  async schedule(message: Message): Promise<any> {
+    this.workQueue.push(message);
+
     // have we reached max workers?
     if (this.processPool.isActiveLimitReached()) {
       if (!this.processPool.isIdlePoolEmpty()) {
@@ -43,11 +45,6 @@ export default class SimpleScheduler implements Scheduler {
       // create a new worker
       this.processPool.createWorker();
     }
-  }
-
-  async queue(message: Message) {
-    this.workQueue.push(message);
-    this.runSchedule();
 
     return message.getEventualValue();
   }

@@ -17,17 +17,17 @@ export default class System {
     this.scheduler = new SimpleScheduler();
   }
 
-  async schedule(message: Message): Promise<any> {
-    return this.scheduler.queue(message);
+  async send(message: Message): Promise<any> {
+    return this.scheduler.schedule(message);
   }
 
-  actorOf(parameters: { properties: any, actorPath: string }): ActorReference {
-    if (parameters.actorPath === '') {
+  actorOf(actorPath: string, properties: any): ActorReference {
+    if (actorPath === '') {
       throw new Error('You must specify a path to an actor.');
     }
 
     let system = this;
-    let requireActorPath = path.join(process.cwd(), parameters.actorPath);
+    let requireActorPath = path.join(process.cwd(), actorPath);
 
     return new ActorReference({
       actorPath: requireActorPath,

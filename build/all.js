@@ -38,15 +38,15 @@ rollup.rollup({
   });
 }).catch(rethrow);
 
-glob.sync('tests/**/*.js').forEach(function(testFile) {
-  rollup.rollup({
-    entry: testFile,
-    format: 'cjs',
-  plugins: [ babel() ],
-  }).then(function( bundle ) {
-    return bundle.write({
-      format: 'cjs',
-      dest: 'dist/' + testFile
-    });
-  }).catch(rethrow);
-});
+// glob.sync('tests/**/*.js').forEach(function(testFile) {
+//   rollup.rollup({
+//     entry: testFile,
+//     format: 'cjs',
+//   plugins: [ babel() ],
+//   }).then(function( bundle ) {
+//     return bundle.write({
+//       format: 'cjs',
+//       dest: 'dist/' + testFile
+//     });
+//   }).catch(rethrow);
+// });

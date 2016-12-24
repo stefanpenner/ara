@@ -4,14 +4,16 @@ import Scheduler from './scheduler';
 interface ProcessPool {
   workers: Array<Worker>;
   idle: Array<Worker>;
-  maxCPU: Number;
+  maxPoolSize: Number;
   scheduler: Scheduler;
+  workerTimeout: Number;
   isActivePoolEmpty(): Boolean;
   isIdlePoolEmpty(): Boolean;
   createWorker(): Worker;
   requestIdleWorker(): any;
   isActiveLimitReached(): Boolean;
   noop(): any;
+  terminate(): Promise<Boolean>;
 }
 
 export default ProcessPool;

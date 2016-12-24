@@ -6,7 +6,7 @@ interface Scheduler {
   processPool: ProcessPool;
   nextMessage(): Message;
   isFree(): Boolean;
-  queue(message: Message): Promise<any>
+  schedule(message: Message): Promise<any>
 }
 
 export default Scheduler;

@@ -12,42 +12,47 @@ import regeneratorRuntime from 'regenerator-runtime';
 export default class ProcessPool implements Pool {
   workers: Array<Worker>;
   idle: Array<Worker>;
-  maxCPU: Number;
+  maxPoolSize: Number;
   scheduler: Scheduler;
+  workerTimeout: Number;
 
-  constructor(options = {}) {
+  constructor(options: { maxPoolSize?: Number, scheduler: Scheduler }) {
     this.workers = [];
     this.idle = [];
-    this.maxCPU = options.maxCPU || maxCPU;
+    this.maxPoolSize = options.maxPoolSize || maxCPU;
     this.scheduler = options.scheduler;
   }
 
-  _createWorkerInstance() {
+  _createWorkerInstance(): Worker {
     return new Worker(`${__dirname}/runner.js`);
   }
 
-  isActivePoolEmpty() {
+  isActivePoolEmpty(): Boolean {
     return this.workers.length === 0;
   }
 
-  isIdlePoolEmpty() {
+  isIdlePoolEmpty(): Boolean {
     return this.idle.length === 0;
   }
 
-  isActiveLimitReached() {
-    return this.workers.length === this.maxCPU;
+  isActiveLimitReached(): Boolean {
+    return this.workers.length === this.maxPoolSize;
   }
 
   noop() { }
 
-  createWorker() {
+  terminate(): Promise<Boolean> {
+    return Promise.resolve(true);
+  }
+
+  createWorker(): Worker {
     let worker = this._createWorkerInstance();
     this.workers.push(worker);
     this._becameIdle(worker);
     return worker;
   }
 
-  async _executeWork(worker) {
+  async _executeWork(worker: Worker): Promise<void> {
     let work = this.scheduler.nextMessage();
 
     try {
@@ -63,7 +68,7 @@ export default class ProcessPool implements Pool {
     }
   }
 
-  requestIdleWorker() {
+  requestIdleWorker(): void {
     this._executeWork(this.idle.pop());
   }
 
