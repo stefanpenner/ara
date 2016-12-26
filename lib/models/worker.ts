@@ -3,7 +3,7 @@ import { Promise } from 'rsvp';
 import _debug from 'debug';
 
 import Message from './message';
-import Serializable from './interfaces/serializable';
+import Serializable from '../interfaces/serializable';
 
 const debug = _debug('ara:worker');
 
@@ -74,6 +74,7 @@ export default class Worker implements Serializable {
       execArgv.push('--debug=' + this.debugPort);
     }
 
+    // console.log('🍴 forked process');
     return ps.fork(url, { execArgv: execArgv });
   }
 

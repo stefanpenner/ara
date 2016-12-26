@@ -1,4 +1,5 @@
-import Scheduler from './interfaces/scheduler';
+import Scheduler from '../interfaces/scheduler';
+import Token from './token';
 import Message from './message';
 import ProcessPool from './pool';
 
@@ -7,7 +8,7 @@ import regeneratorRuntime from 'regenerator-runtime';
 /* eslint-enable */
 
 export default class SimpleScheduler implements Scheduler {
-  workQueue: Array<Message>;
+  workQueue: Array<Token>;
   processPool: ProcessPool;
 
   constructor() {
@@ -16,15 +17,20 @@ export default class SimpleScheduler implements Scheduler {
   }
 
   nextMessage() {
-    return this.workQueue.pop();
+    return this.workQueue.shift();
   }
 
   isFree() {
-    return this.workQueue.length !== 0;
+    let result = this.workQueue.length === 0;
+    // console.log(`scheduler.isFree ${result} (queue: ${this.workQueue.length})`);
+    return result;
   }
 
-  async schedule(message: Message): Promise<any> {
-    this.workQueue.push(message);
+  schedule(message: Message): Token {
+    let token = new Token(message);
+
+    this.workQueue.push(token);
+    // console.log(`🕐 schedule (queue: ${this.workQueue.length})`);
 
     // have we reached max workers?
     if (this.processPool.isActiveLimitReached()) {
@@ -46,6 +52,6 @@ export default class SimpleScheduler implements Scheduler {
       this.processPool.createWorker();
     }
 
-    return message.getEventualValue();
+    return token;
   }
 }

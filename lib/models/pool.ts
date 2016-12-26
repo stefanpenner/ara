@@ -1,9 +1,8 @@
-import Pool from './interfaces/process-pool';
-import Scheduler from './interfaces/scheduler';
-
-import maxCPU from './max-cpu';
+import Pool from '../interfaces/process-pool';
+import Scheduler from '../interfaces/scheduler';
+import { Promise } from 'rsvp';
+import maxCPU from '../utils/max-cpu';
 import Worker from './worker';
-import './ensure-promise';
 
 /* eslint-disable */
 import regeneratorRuntime from 'regenerator-runtime';
@@ -48,37 +47,38 @@ export default class ProcessPool implements Pool {
   createWorker(): Worker {
     let worker = this._createWorkerInstance();
     this.workers.push(worker);
-    this._becameIdle(worker);
+    // this._becameIdle(worker);
+    this._executeWork(worker);
     return worker;
   }
 
   async _executeWork(worker: Worker): Promise<void> {
     let work = this.scheduler.nextMessage();
 
+    if (!work) { return; }
+
     try {
-      let value = await worker.send(work);
+      let value = await worker.send(work.runnable);
 
       work.eventualValue.resolve(value);
+
+      // console.log(`👷 worker ${worker.id} is done with work`);
 
       this._becameIdle(worker);
     } catch (reason) {
       work.eventualValue.reject(reason);
-
-      // this._crashed(worker, reason);
     }
   }
 
   requestIdleWorker(): void {
-    this._executeWork(this.idle.pop());
+    let worker = this.idle.shift();
+    // console.log(`requestIdleWorker ${worker.id}`);
+    this._executeWork(worker);
   }
 
   _becameIdle(worker) {
-    if (this.scheduler.isFree()) {
-      this._executeWork(worker);
-    } else {
-      // ensure unique, maybe use fast-ordered-set
-      this.idle.push(worker);
-    }
+    this.idle.push(worker);
+    // console.log(`worker ${worker.id} became idle; (idle queue: ${this.idle.length})`);
   }
 
   _crashed(/*worker, reason*/) {

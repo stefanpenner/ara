@@ -1,7 +1,8 @@
 import path from 'path';
 import Message from './message';
+import Actor from './actor';
 import ActorReference from './actor-reference';
-import Scheduler from './interfaces/scheduler';
+import Scheduler from '../interfaces/scheduler';
 import SimpleScheduler from './simple-scheduler';
 import HeimdallLogger from 'heimdalljs-logger';
 
@@ -21,18 +22,17 @@ export default class System {
     return this.scheduler.schedule(message);
   }
 
-  actorOf(actorPath: string, properties: any): ActorReference {
+  actorOf(actorPath: string, constructorProperties: any): ActorReference {
     if (actorPath === '') {
       throw new Error('You must specify a path to an actor.');
     }
 
-    let system = this;
+    let scheduler = this.scheduler;
     let requireActorPath = path.join(process.cwd(), actorPath);
 
-    return new ActorReference({
-      actorPath: requireActorPath,
-      system
-    });
+    let actor = new Actor({ scheduler });
+
+    return new ActorReference({ actor, constructorProperties, actorPath: requireActorPath });
   }
 
   startTime(): Number {
