@@ -26,20 +26,29 @@ export default class SimpleScheduler implements Scheduler {
     return result;
   }
 
-  schedule(message: Message): Token {
+  push(message: Message) {
     let token = new Token(message);
 
     this.workQueue.push(token);
-    console.log(`🕐 schedule (queue: ${this.workQueue.length})`);
 
-    if (this.processPool.isActiveLimitReached()) {
-      if (!this.processPool.isIdlePoolEmpty()) {
+    return token;
+  }
+
+  schedule(message: Message): Token {
+    let token = this.push(message);
+
+    //console.log(`🕐 schedule (queue: ${this.workQueue.length})`);
+
+    if (!this.processPool.isActiveLimitReached()) {
+      this.processPool.createWorker()
+    } else {
+      if (this.processPool.isRunningPoolEmpty()) {
+        //console.log('request worker');
         this.processPool.requestIdleWorker();
       } else {
+        //console.log('noop');
         this.processPool.noop();
       }
-    } else {
-      this.processPool.createWorker();
     }
 
     return token;

@@ -11,6 +11,7 @@ import regeneratorRuntime from 'regenerator-runtime';
 export default class ProcessPool implements Pool {
   workers: Array<Worker>;
   idle: Array<Worker>;
+  running: Array<Worker>;
   maxPoolSize: Number;
   scheduler: Scheduler;
   workerTimeout: Number;
@@ -18,6 +19,7 @@ export default class ProcessPool implements Pool {
   constructor(options: { maxPoolSize?: Number, scheduler: Scheduler }) {
     this.workers = [];
     this.idle = [];
+    this.running = [];
     this.maxPoolSize = options.maxPoolSize || maxCPU;
     this.scheduler = options.scheduler;
   }
@@ -38,6 +40,10 @@ export default class ProcessPool implements Pool {
     return this.workers.length === this.maxPoolSize;
   }
 
+  isRunningPoolEmpty(): Boolean {
+    return this.running.length === 0;
+  }
+
   noop() { }
 
   terminate(): Promise<Boolean> {
@@ -47,8 +53,7 @@ export default class ProcessPool implements Pool {
   createWorker(): Worker {
     let worker = this._createWorkerInstance();
     this.workers.push(worker);
-    // this._becameIdle(worker);
-    console.log(`👷 create worker ${worker.id}`);
+    //console.log(`👷 create worker ${worker.id}`);
     this._executeWork(worker);
     return worker;
   }
@@ -59,27 +64,32 @@ export default class ProcessPool implements Pool {
     if (!work) { return; }
 
     try {
+      this.running.push(worker);
+
       let value = await worker.send(work.runnable);
 
       work.eventualValue.resolve(value);
 
-      console.log(`👷 worker ${worker.id} is done with work`);
+      //console.log(`👷 worker ${worker.id} is done with work`);
 
-      this._becameIdle(worker);
+      //this._becameIdle(worker);
     } catch (reason) {
       work.eventualValue.reject(reason);
     }
+
+    this.running.shift();
   }
 
   requestIdleWorker(): void {
-    let worker = this.idle.shift();
-    console.log(`👷 request idle worker ${worker.id}`);
+    let worker = this.workers.shift();
+    //console.log(`👷 request idle worker ${worker.id}`);
     this._executeWork(worker);
+    this.workers.push(worker);
   }
 
   _becameIdle(worker) {
     this.idle.push(worker);
-    console.log(`worker ${worker.id} became idle; (idle queue: ${this.idle.length})`);
+    //console.log(`worker ${worker.id} became idle; (idle queue: ${this.idle.length})`);
   }
 
   _crashed(/*worker, reason*/) {
