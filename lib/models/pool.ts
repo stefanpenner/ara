@@ -48,6 +48,7 @@ export default class ProcessPool implements Pool {
     let worker = this._createWorkerInstance();
     this.workers.push(worker);
     // this._becameIdle(worker);
+    console.log(`👷 create worker ${worker.id}`);
     this._executeWork(worker);
     return worker;
   }
@@ -62,7 +63,7 @@ export default class ProcessPool implements Pool {
 
       work.eventualValue.resolve(value);
 
-      // console.log(`👷 worker ${worker.id} is done with work`);
+      console.log(`👷 worker ${worker.id} is done with work`);
 
       this._becameIdle(worker);
     } catch (reason) {
@@ -72,13 +73,13 @@ export default class ProcessPool implements Pool {
 
   requestIdleWorker(): void {
     let worker = this.idle.shift();
-    // console.log(`requestIdleWorker ${worker.id}`);
+    console.log(`👷 request idle worker ${worker.id}`);
     this._executeWork(worker);
   }
 
   _becameIdle(worker) {
     this.idle.push(worker);
-    // console.log(`worker ${worker.id} became idle; (idle queue: ${this.idle.length})`);
+    console.log(`worker ${worker.id} became idle; (idle queue: ${this.idle.length})`);
   }
 
   _crashed(/*worker, reason*/) {
